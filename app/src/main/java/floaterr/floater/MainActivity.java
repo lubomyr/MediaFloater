@@ -3,13 +3,14 @@ package floaterr.floater;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 
 public class MainActivity extends Activity {
     private Uri imageUri;
     private Uri videoUri;
-
-    enum MediaType {IMAGE, VIDEO}
+    private final int REQUEST_OVERLAY_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,11 +27,12 @@ public class MainActivity extends Activity {
                 imageUri = intent.getData();
             } else if (type.startsWith("video/")) {
                 videoUri = intent.getData();
+            } else {
+                videoUri = intent.getData();
             }
         }
 
-        runService();
-        finish();
+        checkDrawOverlayPermission();
     }
 
     private void runService() {
@@ -40,6 +42,34 @@ public class MainActivity extends Activity {
         if (videoUri != null)
             intent.putExtra("video", videoUri);
         startService(intent);
+    }
+
+    private void checkDrawOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
+            } else {
+                runService();
+                finish();
+            }
+        } else {
+            runService();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    runService();
+                    finish();
+                }
+            }
+        }
     }
 
 
