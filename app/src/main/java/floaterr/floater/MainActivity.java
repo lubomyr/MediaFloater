@@ -7,6 +7,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 
+import static floaterr.floater.NameKeys.KEY_IMAGE;
+import static floaterr.floater.NameKeys.KEY_VIDEO;
+
 public class MainActivity extends Activity {
     private Uri imageUri;
     private Uri videoUri;
@@ -31,17 +34,17 @@ public class MainActivity extends Activity {
                 videoUri = intent.getData();
             }
         }
-
         checkDrawOverlayPermission();
     }
 
     private void runService() {
         Intent intent = new Intent(MainActivity.this, FloatingWindow.class);
         if (imageUri != null)
-            intent.putExtra("image", imageUri);
+            intent.putExtra(KEY_IMAGE, imageUri);
         if (videoUri != null)
-            intent.putExtra("video", videoUri);
+            intent.putExtra(KEY_VIDEO, videoUri);
         startService(intent);
+        finish();
     }
 
     private void checkDrawOverlayPermission() {
@@ -52,11 +55,9 @@ public class MainActivity extends Activity {
                 startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
             } else {
                 runService();
-                finish();
             }
         } else {
             runService();
-            finish();
         }
     }
 
@@ -66,11 +67,8 @@ public class MainActivity extends Activity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(this)) {
                     runService();
-                    finish();
                 }
             }
         }
     }
-
-
 }

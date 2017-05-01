@@ -46,6 +46,7 @@
 
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
+                <data android:mimeType="image/*" />
                 <data android:scheme="rtmp" />
                 <data android:scheme="rtmpe" />
                 <data android:scheme="rtmps" />
@@ -72,6 +73,7 @@
                 <data android:scheme="https" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
+                <data android:mimeType="image/*" />
                 <data android:mimeType="*/rmvb" />
                 <data android:mimeType="*/avi" />
                 <data android:mimeType="*/mkv" />
@@ -109,6 +111,17 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="*" />
+
+                <!-- image -->
+
+                <data android:pathPattern=".*\\.jpg" />
+                <data android:pathPattern=".*\\.jpeg" />
+                <data android:pathPattern=".*\\.png" />
+                <data android:pathPattern=".*\\.gif" />
+                <data android:pathPattern=".*\\.JPG" />
+                <data android:pathPattern=".*\\.JPEG" />
+                <data android:pathPattern=".*\\.PNG" />
+                <data android:pathPattern=".*\\.GIF" />
 
                 <!-- video -->
 

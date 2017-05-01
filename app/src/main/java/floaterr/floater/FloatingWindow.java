@@ -17,6 +17,10 @@ import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
+import static floaterr.floater.NameKeys.KEY_IMAGE;
+import static floaterr.floater.NameKeys.KEY_POSITION;
+import static floaterr.floater.NameKeys.KEY_VIDEO;
+
 public class FloatingWindow extends Service implements MediaPlayer.OnCompletionListener,
         MediaPlayer.OnPreparedListener {
     private WindowManager wm;
@@ -32,6 +36,7 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
     private int realVideoWidth;
     private int realVideoHeight;
     private Uri videoUri;
+    private Uri imageUri;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -167,9 +172,12 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
                 stopSelf();
                 Intent intent = new Intent(FloatingWindow.this, FullScreenActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                int pos = myVideo.getCurrentPosition();
-                intent.putExtra("video", videoUri);
-                intent.putExtra("Position", pos);
+                if (videoUri != null) {
+                    int pos = myVideo.getCurrentPosition();
+                    intent.putExtra(KEY_VIDEO, videoUri);
+                    intent.putExtra(KEY_POSITION, pos);
+                } else if (imageUri != null)
+                    intent.putExtra(KEY_IMAGE, imageUri);
                 startActivity(intent);
             }
         });
@@ -185,9 +193,9 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
     }
 
     private void getData(Intent intent) {
-        Uri imageUri = intent.getParcelableExtra("image");
-        videoUri = intent.getParcelableExtra("video");
-        int position = intent.getIntExtra("Position", 0);
+        imageUri = intent.getParcelableExtra(KEY_IMAGE);
+        videoUri = intent.getParcelableExtra(KEY_VIDEO);
+        int position = intent.getIntExtra(KEY_POSITION, 0);
         if (imageUri != null) {
             myVideo.setVisibility(View.GONE);
             myImage.setVisibility(View.VISIBLE);

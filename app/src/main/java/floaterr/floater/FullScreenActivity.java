@@ -7,14 +7,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
+
+import static floaterr.floater.NameKeys.KEY_IMAGE;
+import static floaterr.floater.NameKeys.KEY_POSITION;
+import static floaterr.floater.NameKeys.KEY_VIDEO;
 
 public class FullScreenActivity extends Activity implements MediaPlayer.OnCompletionListener,
 				     								  MediaPlayer.OnInfoListener {
     private MediaController mediaControls;
     private VideoView mVideoView;
-	private Uri uri;
+	private Uri videoUri;
+	private Uri imageUri;
 	private Integer position;
 	
 	@Override
@@ -27,22 +33,29 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 			mediaControls = new MediaController(this);
 			
 		getData();
-		startPlayer();
-    }
+		if (imageUri != null)
+			showImage();
+		if (videoUri != null)
+			startPlayer();
+		bindPopUpButton();
+	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState)
 	{
 		super.onSaveInstanceState(outState);
-		outState.putInt("Position", mVideoView.getCurrentPosition());
+		if (videoUri != null)
+			outState.putInt("Position", mVideoView.getCurrentPosition());
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState)
 	{
 		super.onRestoreInstanceState(savedInstanceState);
-		int position = savedInstanceState.getInt("Position");
-		mVideoView.seekTo(position);
+		if (videoUri != null) {
+			int position = savedInstanceState.getInt("Position");
+			mVideoView.seekTo(position);
+		}
 	}
 	
 	@Override
@@ -61,15 +74,15 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 
 	private void getData() {
 		Intent intent = getIntent();
-		position = intent.getIntExtra("Position", 0);
-		uri = intent.getParcelableExtra("video");
+		imageUri = intent.getParcelableExtra(KEY_IMAGE);
+		videoUri = intent.getParcelableExtra(KEY_VIDEO);
+		position = intent.getIntExtra(KEY_POSITION, 0);
 	}
 
 	private void startPlayer()
 	{
 		mVideoView = (VideoView) findViewById(R.id.video);
-		ImageButton popupBtn = (ImageButton) findViewById(R.id.popup);
-		mVideoView.setVideoURI(uri);
+		mVideoView.setVideoURI(videoUri);
 		mVideoView.setMediaController(mediaControls);
 		mediaControls.show();
 		mVideoView.start();
@@ -78,18 +91,30 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 		
 		mVideoView.setOnCompletionListener(this);
 		mVideoView.setOnInfoListener(this);
-		
+	}
+
+	private void showImage() {
+		ImageView imageView = (ImageView) findViewById(R.id.image);
+		imageView.setImageURI(imageUri);
+	}
+
+	private void bindPopUpButton() {
+		ImageButton popupBtn = (ImageButton) findViewById(R.id.popup);
 		popupBtn.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					finish();
-					Intent intent = new Intent(FullScreenActivity.this, FloatingWindow.class);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			@Override
+			public void onClick(View v) {
+				finish();
+				Intent intent = new Intent(FullScreenActivity.this, FloatingWindow.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				if (imageUri != null) {
+					intent.putExtra(KEY_IMAGE, imageUri);
+				} else if (videoUri != null) {
 					int pos = mVideoView.getCurrentPosition();
-					intent.putExtra("video", uri);
-					intent.putExtra("Position", pos);
-					startService(intent);
+					intent.putExtra(KEY_VIDEO, videoUri);
+					intent.putExtra(KEY_POSITION, pos);
 				}
-			});
+				startService(intent);
+			}
+		});
 	}
 }
