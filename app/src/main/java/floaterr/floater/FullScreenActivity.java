@@ -6,28 +6,32 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.VideoView;
+
+import floaterr.floater.view.VideoControllerView;
 
 import static floaterr.floater.NameKeys.KEY_IMAGE;
 import static floaterr.floater.NameKeys.KEY_POSITION;
 import static floaterr.floater.NameKeys.KEY_VIDEO;
 
 public class FullScreenActivity extends Activity implements MediaPlayer.OnCompletionListener,
-				     								  MediaPlayer.OnInfoListener {
-    private MediaController mediaControls;
+		MediaPlayer.OnInfoListener, VideoControllerView.MediaPlayerControl {
+	private MediaController mediaControls;
     private VideoView mVideoView;
 	private Uri videoUri;
 	private Uri imageUri;
 	private Integer position;
+	private VideoControllerView controller;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.full);
+		setContentView(R.layout.fullscreen_layout);
 
 		if (mediaControls == null)
 			mediaControls = new MediaController(this);
@@ -38,6 +42,7 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 		if (videoUri != null)
 			startPlayer();
 		bindPopUpButton();
+		bindLayoutClick();
 	}
 
 	@Override
@@ -83,8 +88,9 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 	{
 		mVideoView = (VideoView) findViewById(R.id.video);
 		mVideoView.setVideoURI(videoUri);
-		mVideoView.setMediaController(mediaControls);
-		mediaControls.show();
+		controller = new VideoControllerView(this);
+		controller.setMediaPlayer(this);
+		controller.setAnchorView((FrameLayout) findViewById(R.id.rootLayout));
 		mVideoView.start();
 		if ((position != null) && (position != 0))
 			mVideoView.seekTo(position);
@@ -117,4 +123,78 @@ public class FullScreenActivity extends Activity implements MediaPlayer.OnComple
 			}
 		});
 	}
+
+	private void bindLayoutClick() {
+		FrameLayout frameLayout = (FrameLayout) findViewById(R.id.rootLayout);
+		frameLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (controller != null) {
+					controller.show();
+				}
+			}
+		});
+	}
+
+	// Implement VideoMediaController.MediaPlayerControl
+	@Override
+	public boolean canPause() {
+		return true;
+	}
+
+	@Override
+	public boolean canSeekBackward() {
+		return true;
+	}
+
+	@Override
+	public boolean canSeekForward() {
+		return true;
+	}
+
+	@Override
+	public int getBufferPercentage() {
+		return 0;
+	}
+
+	@Override
+	public int getCurrentPosition() {
+		return mVideoView.getCurrentPosition();
+	}
+
+	@Override
+	public int getDuration() {
+		return mVideoView.getDuration();
+	}
+
+	@Override
+	public boolean isPlaying() {
+		return mVideoView.isPlaying();
+	}
+
+	@Override
+	public void pause() {
+		mVideoView.pause();
+	}
+
+	@Override
+	public void seekTo(int i) {
+		mVideoView.seekTo(i);
+	}
+
+	@Override
+	public void start() {
+		mVideoView.start();
+	}
+
+	@Override
+	public boolean isFullScreen() {
+		return false;
+	}
+
+	@Override
+	public void toggleFullScreen() {
+
+	}
+// End VideoMediaController.MediaPlayerControl
 }

@@ -3,4 +3,9 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="image">image</string>
+    <string name="popup">popup</string>
+    <string name="description">Media Controls</string>
+    <string name="close">Close</string>
+    <string name="resize">Resize</string>
 </resources>

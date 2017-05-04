@@ -2,7 +2,6 @@ package floaterr.floater.view;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,7 +20,7 @@ public class FloaterView extends RelativeLayout {
         super(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.custom_layout, this, true);
+        inflater.inflate(R.layout.floating_layout, this, true);
 
         closeBtn = (ImageButton) findViewById(R.id.ib_close);
         ImageButton resize = (ImageButton) findViewById(R.id.ib_resize);
