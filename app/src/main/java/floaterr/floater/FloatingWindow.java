@@ -50,8 +50,8 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
     public void onCreate() {
         super.onCreate();
 
-        currentImageWidth = 400;
-        currentImageHeight = 400;
+        wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        getDefaultDimension();
     }
 
     @Override
@@ -69,8 +69,6 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
     }
 
     private void startup() {
-        wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-
         parameters = new WindowManager.LayoutParams(
                 currentImageWidth, currentImageHeight, WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -292,6 +290,17 @@ public class FloatingWindow extends Service implements MediaPlayer.OnCompletionL
         wm.updateViewLayout(myView, updatedParameters);
         closeBtn.setVisibility(View.VISIBLE);
         fullScrButton.setVisibility(View.VISIBLE);
+    }
+
+    private void getDefaultDimension() {
+        ;
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        currentImageWidth = width / 2;
+        currentImageHeight = height / 2;
     }
 
     @Override
