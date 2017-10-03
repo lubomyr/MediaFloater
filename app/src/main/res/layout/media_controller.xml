@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="4dip"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageButton
             android:id="@+id/prev"
@@ -36,10 +37,10 @@
             style="@android:style/MediaButton.Rew"
             android:contentDescription="@string/description" />
 
-        <ImageButton
-            android:id="@+id/pause"
-            style="@android:style/MediaButton.Play"
-            android:contentDescription="@string/description" />
+        <!-- <ImageButton
+             android:id="@+id/pause"
+             style="@android:style/MediaButton.Play"
+             android:contentDescription="@string/description" />-->
 
         <ImageButton
             android:id="@+id/ffwd"
@@ -56,13 +57,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            style="@android:style/MediaButton.Play"
+            android:contentDescription="@string/description" />
 
         <TextView
             android:id="@+id/time_current"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:paddingTop="4dip"
+            android:paddingTop="5dip"
             android:paddingLeft="4dip"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
@@ -80,7 +91,7 @@
             android:id="@+id/time"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:paddingTop="4dip"
+            android:paddingTop="5dip"
             android:paddingRight="4dip"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
@@ -88,6 +99,7 @@
             android:paddingLeft="4dip" />
 
         <ImageButton
+            android:visibility="gone"
             android:id="@+id/fullscreen"
             android:layout_marginTop="-7dp"
             android:paddingTop="4dip"
